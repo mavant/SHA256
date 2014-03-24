@@ -9,7 +9,7 @@ fn rotr(num: u32, count: u32) -> u32 {
 	}
 }
 
-fn main() {
+fn sha256(input: ~str) {
 	let mut h0:u32 = 0x6a09e667;
 	let mut h1:u32 = 0xbb67ae85;
 	let mut h2:u32 = 0x3c6ef372;
@@ -29,7 +29,7 @@ fn main() {
 		0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
 		0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
 
-	let mut msg: ~[u8] = "foo".as_bytes().to_owned();
+	let mut msg: ~[u8] = input.as_bytes().to_owned();
 	let l = msg.len() as u64;
 	msg.push(0b10000000u8);
 
@@ -93,4 +93,8 @@ fn main() {
 	}
 
 	println!("{:x}{:x}{:x}{:x}{:x}{:x}{:x}{:x}", h0, h1, h2, h3, h4, h5, h6, h7);
+}
+
+fn main() {
+	sha256(~"foo");
 }
