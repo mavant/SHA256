@@ -1,4 +1,5 @@
 use std::str;
+use std::num;
 
 fn main() {
 	let mut h0:u32 = 0x6a09e667;
@@ -30,15 +31,14 @@ fn main() {
 	std::io::extensions::u64_to_be_bytes(l, 8, |v| for i in v.iter() { msg.push(*i);});
 
 	for c in msg.mut_chunks(64) {
-		let mut w: [u32,..64] = [0, ..64]; 
+		let mut w: [u32,..64] = [0, ..64];
 		for i in range(0, 16) {
-			let a1: u32 = (c[4 * i] as u32);  //TODO: Fix this;
-			let a2: u32 = (c[4 * i + 1] as u32) * exp2(16);
-			let a3: u32 = (c[4 * i + 2] as u32) * exp2(8);
+			let a1: u32 = (c[4 * i] as u32) * (num::pow(2, 24) as u32);
+			let a2: u32 = (c[4 * i + 1] as u32) * (num::pow(2, 16) as u32);
+			let a3: u32 = (c[4 * i + 2] as u32) * (num::pow(2, 8) as u32);
 			let a4: u32 = (c[4 * i + 3] as u32);
 			let a: u32 = a1 + a2 + a3 +a4;
-			//w[i] = 
-			println!("{} {} {} {} {}", a1, a2, a3, a4, a);
+      w[i] = a;
 		}
 	}
 }
