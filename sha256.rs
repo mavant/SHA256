@@ -5,7 +5,7 @@ fn rotr(num: u32, count: u32) -> u32 {
 	if count == 0 {
 		num
 	} else {
-		(num << count) | (num >> (32 - count))
+		(num >> count) | (num << (32 - count))
 	}
 }
 
@@ -31,9 +31,9 @@ fn sha256(input: ~str) {
 
 	let mut msg: ~[u8] = input.as_bytes().to_owned();
 	let l = msg.len() as u64;
-	msg.push(0b10000000u8);
+	msg.push(0x80);
 
-	while (msg.len() % 64) !=  56 {
+	while (msg.len() % 64) != 56 {
 		msg.push(0);
 	}
 	std::io::extensions::u64_to_be_bytes(l, 8, |v| for i in v.iter() { msg.push(*i);});
@@ -50,9 +50,14 @@ fn sha256(input: ~str) {
 		}
 
 		for i in range(16, 64) {
-			let s0 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ rotr(w[i-15], 3);
-      let s1 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ rotr(w[i-2], 10);
+			let s0: u32 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ rotr(w[i-15], 3);
+      let s1: u32 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ rotr(w[i-2], 10);
       w[i] = w[i-16] + s0 + w[i-7] + s1;
+		}
+
+
+		for i in w.iter() {
+			println!("{}", i);
 		}
 
 		let mut a = h0;
@@ -82,19 +87,19 @@ fn sha256(input: ~str) {
 	    a = temp1 + temp2;
 		}
 
-		h0 += a;
-		h1 += b;
-		h2 += c;
-		h3 += d;
-		h4 += e;
-		h5 += f;
-		h6 += g;
-		h7 += h;
+		h0 = (h0 + a);
+		h1 = (h1 + b);
+		h2 = (h2 + c);
+		h3 = (h3 + d);
+		h4 = (h4 + e);
+		h5 = (h5 + f);
+		h6 = (h6 + g);
+		h7 = (h7 + h);
 	}
 
 	println!("{:x}{:x}{:x}{:x}{:x}{:x}{:x}{:x}", h0, h1, h2, h3, h4, h5, h6, h7);
 }
 
 fn main() {
-	sha256(~"foo");
+	sha256(~"");
 }
