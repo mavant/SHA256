@@ -1,6 +1,14 @@
 use std::str;
 use std::num;
 
+fn rotr(num: u32, count: u32) -> u32 {
+	if count == 0 {
+		num
+	} else {
+		(num << count) | (num >> (32 - count))
+	}
+}
+
 fn main() {
 	let mut h0:u32 = 0x6a09e667;
 	let mut h1:u32 = 0xbb67ae85;
@@ -21,7 +29,7 @@ fn main() {
 		0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
 		0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
 
-	let mut msg: ~[u8] = "The quick brown fox jumps over the lazy dog. Jackdaws love my big sphinx of quartz. In faith I do not love thee with mine eyes, for they in thee a thousand errors note, but 'tis my heart that loves what they despise, who in despite of view is pleased to dote.".as_bytes().to_owned();
+	let mut msg: ~[u8] = "foo".as_bytes().to_owned();
 	let l = msg.len() as u64;
 	msg.push(0b10000000u8);
 
@@ -38,7 +46,51 @@ fn main() {
 			let a3: u32 = (c[4 * i + 2] as u32) * (num::pow(2, 8) as u32);
 			let a4: u32 = (c[4 * i + 3] as u32);
 			let a: u32 = a1 + a2 + a3 +a4;
-      w[i] = a;
+			w[i] = a;
 		}
+
+		for i in range(16, 64) {
+			let s0 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ rotr(w[i-15], 3);
+      let s1 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ rotr(w[i-2], 10);
+      w[i] = w[i-16] + s0 + w[i-7] + s1;
+		}
+
+		let mut a = h0;
+		let mut b = h1;
+		let mut c = h2;
+		let mut d = h3;
+		let mut e = h4;
+		let mut f = h5;
+		let mut g = h6;
+		let mut h = h7;
+
+		for i in range(0, 64) {
+			let S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+	    let ch = (e & f) ^ (!e & g);
+	    let temp1 = h + S1 + ch + k[i] + w[i];
+	    let S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+	    let maj = (a & b) ^ (a & c) ^ (b & c);
+	    let temp2 = S0 + maj;
+
+		  h = g;
+	    g = f;
+	    f = e;
+	    e = d + temp1;
+	    d = c;
+	    c = b;
+	    b = a;
+	    a = temp1 + temp2;
+		}
+
+		h0 += a;
+		h1 += b;
+		h2 += c;
+		h3 += d;
+		h4 += e;
+		h5 += f;
+		h6 += g;
+		h7 += h;
 	}
+
+	println!("{:x}{:x}{:x}{:x}{:x}{:x}{:x}{:x}", h0, h1, h2, h3, h4, h5, h6, h7);
 }
