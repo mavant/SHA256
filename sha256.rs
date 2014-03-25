@@ -50,8 +50,8 @@ fn sha256(input: ~str) {
 		}
 
 		for i in range(16, 64) {
-			let s0: u32 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ rotr(w[i-15], 3);
-      let s1: u32 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ rotr(w[i-2], 10);
+			let s0: u32 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ (w[i-15] >> 3);
+      let s1: u32 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ (w[i-2] >> 10);
       w[i] = w[i-16] + s0 + w[i-7] + s1;
 		}
 
