@@ -36,7 +36,7 @@ fn sha256(input: ~str) {
 	while (msg.len() % 64) != 56 {
 		msg.push(0);
 	}
-	std::io::extensions::u64_to_be_bytes(l, 8, |v| for i in v.iter() { msg.push(*i);});
+	std::io::extensions::u64_to_be_bytes(l*8, 8, |v| for i in v.iter() { msg.push(*i);});
 
 	for c in msg.mut_chunks(64) {
 		let mut w: [u32,..64] = [0, ..64];
@@ -53,11 +53,6 @@ fn sha256(input: ~str) {
 			let s0: u32 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ (w[i-15] >> 3);
       let s1: u32 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ (w[i-2] >> 10);
       w[i] = w[i-16] + s0 + w[i-7] + s1;
-		}
-
-
-		for i in w.iter() {
-			println!("{}", i);
 		}
 
 		let mut a = h0;
@@ -101,5 +96,5 @@ fn sha256(input: ~str) {
 }
 
 fn main() {
-	sha256(~"");
+	sha256(~"foo");
 }
