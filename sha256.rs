@@ -9,15 +9,8 @@ fn rotr(num: u32, count: u32) -> u32 {
 	}
 }
 
-fn sha256(input: ~str) {
-	let mut h0:u32 = 0x6a09e667;
-	let mut h1:u32 = 0xbb67ae85;
-	let mut h2:u32 = 0x3c6ef372;
-	let mut h3:u32 = 0xa54ff53a;
-	let mut h4:u32 = 0x510e527f;
-	let mut h5:u32 = 0x9b05688c;
-	let mut h6:u32 = 0x1f83d9ab;
-	let mut h7:u32 = 0x5be0cd19;
+fn sha256(input: ~str, input_vector: (u32, u32, u32, u32, u32, u32, u32, u32)) {
+	let (mut h0, mut h1, mut h2, mut h3, mut h4, mut h5, mut h6, mut h7) = input_vector;
 
 	let k =
 		[0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -96,5 +89,14 @@ fn sha256(input: ~str) {
 }
 
 fn main() {
-	sha256(~"foo");
+	sha256(~"foo", (
+		0x6a09e667,
+		0xbb67ae85,
+		0x3c6ef372,
+		0xa54ff53a,
+		0x510e527f,
+		0x9b05688c,
+		0x1f83d9ab,
+		0x5be0cd19
+	));
 }
