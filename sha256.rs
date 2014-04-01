@@ -11,6 +11,7 @@ fn rotr(num: u32, count: u32) -> u32 {
 
 
 fn sha256(input: ~str) {
+	let l = input.len() as u64;
 	sha256_with_iv(input, (
 		0x6a09e667,
 		0xbb67ae85,
@@ -20,9 +21,9 @@ fn sha256(input: ~str) {
 		0x9b05688c,
 		0x1f83d9ab,
 		0x5be0cd19
-	))
+	), l)
 }
-fn sha256_with_iv(input: ~str, input_vector: (u32, u32, u32, u32, u32, u32, u32, u32)) {
+fn sha256_with_iv(input: ~str, input_vector: (u32, u32, u32, u32, u32, u32, u32, u32), l: u64) {
 	let (mut h0, mut h1, mut h2, mut h3, mut h4, mut h5, mut h6, mut h7) = input_vector;
 
 	let k =
@@ -36,7 +37,6 @@ fn sha256_with_iv(input: ~str, input_vector: (u32, u32, u32, u32, u32, u32, u32,
 		0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
 
 	let mut msg: ~[u8] = input.as_bytes().to_owned();
-	let l = msg.len() as u64;
 	msg.push(0x80);
 
 	while (msg.len() % 64) != 56 {
